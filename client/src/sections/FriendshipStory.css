@@ -1,0 +1,116 @@
+.story__numeral {
+  position: absolute;
+  top: 0;
+  right: var(--space-lg);
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 16vw, 13rem);
+  font-weight: 800;
+  color: var(--color-lavender);
+  opacity: 0.12;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.memory-gallery {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--space-lg) var(--space-xs) var(--space-xl);
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.memory-gallery::-webkit-scrollbar { height: 8px; }
+.memory-gallery::-webkit-scrollbar-thumb { background: var(--color-lavender); border-radius: var(--radius-full); }
+
+.polaroid {
+  flex: 0 0 240px;
+  scroll-snap-align: center;
+  background: var(--color-white);
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  transform: rotate(var(--rot, 0deg)) translateY(var(--lift, 0px));
+  transition: transform var(--t-med) var(--ease-smooth), box-shadow var(--t-med);
+}
+
+.polaroid--tall { flex-basis: 260px; }
+.polaroid--tall .polaroid__frame { aspect-ratio: 4 / 5; }
+
+.polaroid:hover {
+  transform: rotate(0deg) translateY(calc(var(--lift, 0px) - 10px));
+  box-shadow: var(--shadow-lg);
+  z-index: 2;
+}
+
+/* The frame clips the image; the image is taller than the frame so the
+   GSAP parallax scrub can translate it vertically without exposing gaps. */
+.polaroid__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--gradient-cool);
+}
+
+.polaroid__photo {
+  position: absolute;
+  top: -18%;
+  left: 0;
+  width: 100%;
+  height: 136%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.polaroid__sticker {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  font-size: 1.4rem;
+  z-index: 2;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+}
+
+/* A strong scrim guarantees the caption reads regardless of what's in the photo. */
+.polaroid__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 45%, rgba(29, 21, 41, 0.85) 100%);
+  z-index: 1;
+}
+
+.polaroid__text {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  padding: 0.9rem 0.8rem 0.7rem;
+}
+
+.polaroid__year {
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--color-cream);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+.polaroid__caption {
+  font-size: var(--fs-small);
+  color: rgba(255, 248, 239, 0.92);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+  margin-top: 0.25rem;
+  line-height: var(--lh-snug);
+}
+
+@media (max-width: 768px) {
+  .memory-gallery {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+  .polaroid { flex: unset; width: 100%; max-width: 320px; margin: 0 auto; transform: rotate(0deg) translateY(0); }
+  .story__numeral { font-size: 5rem; right: var(--space-md); }
+}

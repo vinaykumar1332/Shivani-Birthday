@@ -1,0 +1,44 @@
+.charity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.charity__title {
+  font-size: var(--fs-h1);
+  color: var(--color-plum-deep);
+}
+
+.charity__lead {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-relaxed);
+}
+
+.charity__scratch-wrap { margin: var(--space-lg) 0; }
+
+.charity__detail p { margin-bottom: 0.3rem; font-size: 0.95rem; }
+
+.charity__card {
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(48,36,63,0.15);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  width: 100%;
+}
+
+.charity__card-label {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+.charity__card-value { margin-top: var(--space-xs); font-size: var(--fs-lead); }
+
+.charity__cert { margin-top: var(--space-sm); font-weight: 600; }
+.charity__cert--pending { opacity: 0.7; font-style: italic; font-weight: 400; }

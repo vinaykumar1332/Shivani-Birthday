@@ -1,0 +1,54 @@
+.cake-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.cake {
+  position: relative;
+  width: min(300px, 80vw);
+}
+
+.cake__candles {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: -6px;
+  position: relative;
+  z-index: 2;
+}
+
+.cake__layer {
+  width: 100%;
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+}
+.cake__layer--top { position: relative; height: 54px; background: var(--color-cream); border-radius: 14px 14px 6px 6px; z-index: 1; }
+.cake__layer--mid { height: 46px; margin-top: -8px; width: 92%; margin-inline: auto; background: var(--gradient-cool); }
+.cake__layer--base { height: 50px; margin-top: -8px; width: 104%; margin-inline: auto; background: var(--gradient-warm); border-radius: 10px; }
+
+.cake__flower {
+  position: absolute;
+  top: -10px;
+  font-size: 1.1rem;
+}
+
+.cake-btn {
+  background: var(--gradient-gold);
+  color: var(--color-plum-deep);
+  padding: 0.9rem 2rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  box-shadow: 0 0 30px rgba(246, 196, 83, 0.35), var(--shadow-md);
+  transition: transform var(--t-fast);
+}
+.cake-btn:hover { transform: translateY(-2px); }
+
+.cake-funny {
+  font-family: var(--font-script);
+  font-size: 1.3rem;
+  color: var(--color-peach);
+  text-align: center;
+  max-width: 360px;
+}
