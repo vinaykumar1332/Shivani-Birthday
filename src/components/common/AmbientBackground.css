@@ -4,7 +4,29 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: var(--color-bg);
+  --progress: 0;
+  background: linear-gradient(180deg, #FFF3EA 0%, #FCE7F0 55%, #F1E6FF 100%);
+}
+
+/* Fades in as she scrolls down — only opacity changes, so it stays cheap. */
+.ambient-bg__tint {
+  position: absolute;
+  inset: 0;
+  opacity: calc(var(--progress) * 0.85);
+}
+.ambient-bg__tint--dusk {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(184, 161, 227, 0.55), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 85% 80%, rgba(242, 154, 154, 0.45), transparent 70%),
+    linear-gradient(180deg, #EADCFB 0%, #F6D6E4 100%);
+}
+
+.ambient-bg .ambient-bg__blob--5 {
+  width: 34vw; height: 34vw;
+  top: 55%; left: -8%;
+  background: #F6C453;
+  opacity: 0.28;
+  animation: blob-drift-b 28s ease-in-out infinite reverse;
 }
 
 .ambient-bg__blob {
@@ -12,7 +34,7 @@
   border-radius: 50%;
   filter: blur(90px);
   opacity: 0.4;
-  will-change: transform;
+  will-change: transform, translate;
 }
 
 .ambient-bg__blob--1 {

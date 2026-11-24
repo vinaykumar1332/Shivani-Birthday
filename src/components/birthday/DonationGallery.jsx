@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "../../hooks/useInView";
+import { SmoothImage } from "../ui/SmoothImage";
 import "./DonationGallery.css";
 
 // Brisk but smooth: a quick crossfade, then a short hold.
@@ -68,7 +69,7 @@ export function DonationGallery({ photos, alt }) {
             className={`donation-gallery__thumb ${i === index ? "is-active" : ""}`}
             onClick={() => setIndex(i)}
           >
-            <img src={src} alt="" loading="lazy" decoding="async" />
+            <SmoothImage src={src} alt="" loading="lazy" />
           </button>
         ))}
       </div>

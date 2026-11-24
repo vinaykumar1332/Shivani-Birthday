@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Button } from "../components/ui/Button";
 import { ButterflyIcon, FlowerIcon, SparkleIcon } from "../components/ui/Icons";
-import { SplitWords } from "../components/ui/SplitWords";
+import { SplitWords, Emphasized } from "../components/ui/SplitWords";
+import { SmoothImage } from "../components/ui/SmoothImage";
+import { Balloon } from "../components/ui/Balloon";
 import { useParallax } from "../hooks/useParallax";
 import { birthdayConfig } from "../data/birthdayConfig";
 import "./Hero.css";
@@ -20,6 +22,22 @@ const DECOR = [
   { kind: "sparkle", top: "10%", left: "58%", size: 18, dur: 4.6 },
 ];
 
+const BALLOON_COLORS = ["#F72585", "#F6C453", "#B8A1E3", "#FF8FB1", "#4CC9F0", "#FFA363", "#7BE0AD"];
+const between = (a, b) => a + Math.random() * (b - a);
+
+// Random colour, size, lane, speed and sway for each balloon — different every visit.
+const makeBalloons = (count) =>
+  Array.from({ length: count }, (_, i) => ({
+    color: BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)],
+    size: Math.round(between(34, 58)),
+    // Spread lanes evenly, then jitter, so they never bunch up on one side.
+    left: ((i + between(0.1, 0.9)) / count) * 94 + 3,
+    dur: between(13, 22),
+    delay: -between(0, 22),
+    sway: between(2.6, 4.2),
+    tilt: between(4, 10),
+  }));
+
 function DecorItem({ d }) {
   if (d.kind === "butterfly") return <ButterflyIcon size={d.size} wing={d.wing} wingLight={d.wingLight} />;
   if (d.kind === "flower") return <FlowerIcon size={d.size} />;
@@ -31,6 +49,7 @@ export function Hero({ onBegin }) {
   const layer1 = useParallax(0.15);
   const layer2 = useParallax(0.3);
   const { friendName, hero } = birthdayConfig;
+  const [balloons] = useState(() => makeBalloons(8));
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -60,6 +79,19 @@ export function Hero({ onBegin }) {
         <span className="hero__orb hero__orb--2" />
         <span className="hero__orb hero__orb--3" />
       </div>
+      <div className="hero__balloons" aria-hidden="true">
+        {balloons.map((b, i) => (
+          <span
+            key={i}
+            className="hero__balloon"
+            style={{ left: `${b.left}%`, animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s` }}
+          >
+            <span className="hero__balloon-sway" style={{ "--tilt": `${b.tilt}deg`, animationDuration: `${b.sway}s` }}>
+              <Balloon color={b.color} size={b.size} />
+            </span>
+          </span>
+        ))}
+      </div>
       <div className="hero__particles" aria-hidden="true">
         {Array.from({ length: 22 }).map((_, i) => (
           <span key={i} className="hero__particle" style={{ "--i": i }} />
@@ -79,12 +111,11 @@ export function Hero({ onBegin }) {
 
       <div className="hero__content container">
         <div className="hero__portrait">
-          <img
+          <SmoothImage
             src={hero.portrait}
             alt={`${friendName}, the birthday girl`}
             width="140"
             height="140"
-            decoding="async"
             fetchPriority="high"
           />
           <FlowerIcon size={34} className="hero__portrait-flower hero__portrait-flower--a" />
@@ -101,7 +132,7 @@ export function Hero({ onBegin }) {
             wordClassName={(w) => (w.replace(/[^a-zA-Z]/g, "") === friendName ? "hero__word--name" : "")}
           />
         </h1>
-        <p className="hero__subtext">{hero.subtext}</p>
+        <p className="hero__subtext"><Emphasized text={hero.subtext} /></p>
         <div className="hero__cta-wrap">
           <Button variant="primary" onClick={onBegin}>{hero.cta} →</Button>
         </div>

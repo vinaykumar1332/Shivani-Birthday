@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ButterflyIcon, FlowerIcon } from "../components/ui/Icons";
-import { SplitWords } from "../components/ui/SplitWords";
+import { SplitWords, Emphasized } from "../components/ui/SplitWords";
+import { SmoothImage } from "../components/ui/SmoothImage";
 import { birthdayConfig } from "../data/birthdayConfig";
 import "./FinalScreen.css";
 
@@ -44,14 +45,14 @@ export function FinalScreen({ onRestart }) {
 
       <div className="final__layout container">
         <figure className="final__photo final__photo--left">
-          <img src={photoLeft} alt={`${friendName} smiling`} loading="lazy" decoding="async" />
+          <SmoothImage src={photoLeft} alt={`${friendName} smiling`} loading="lazy" parallax={8} />
         </figure>
 
         <div className="final__content">
           <h2 className="final__title">
             <SplitWords text={finalMessage.title} />
           </h2>
-          <p className="final__subtitle">{finalMessage.subtitle}</p>
+          <p className="final__subtitle"><Emphasized text={finalMessage.subtitle} /></p>
           <div className="final__actions">
             <button className="final__restart" onClick={onRestart}>Watch It All Again ↺</button>
             <p className="final__signoff">{finalMessage.signoff}</p>
@@ -59,7 +60,7 @@ export function FinalScreen({ onRestart }) {
         </div>
 
         <figure className="final__photo final__photo--right">
-          <img src={photoRight} alt={`${friendName} on a happy day`} loading="lazy" decoding="async" />
+          <SmoothImage src={photoRight} alt={`${friendName} on a happy day`} loading="lazy" parallax={8} />
         </figure>
       </div>
     </section>

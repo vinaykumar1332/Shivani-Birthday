@@ -66,6 +66,33 @@
 .cake {
   position: relative;
   width: min(300px, 80vw);
+  /* Keeps the balloons' negative z-index tucked behind the cake, not the page. */
+  isolation: isolate;
+}
+
+/* Two little balloons tied to the cake's top corners, bobbing on their strings. */
+.cake__balloon {
+  position: absolute;
+  bottom: 38%;
+  z-index: -1;
+  transform-origin: 50% 100%;
+  animation: cake-balloon-bob 3.2s ease-in-out infinite alternate;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.3));
+}
+.cake__balloon svg { display: block; }
+.cake__balloon--left { left: 2%; rotate: -14deg; }
+.cake__balloon--right { right: 4%; rotate: 12deg; animation-delay: -1.6s; animation-duration: 2.8s; }
+@keyframes cake-balloon-bob {
+  from { transform: translateY(0) rotate(-4deg); }
+  to { transform: translateY(-8px) rotate(4deg); }
+}
+.cake.is-cheering .cake__balloon { animation: cake-balloon-hop 0.7s ease-in-out 3, cake-balloon-bob 3.2s ease-in-out 2.1s infinite alternate; }
+@keyframes cake-balloon-hop {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(-6deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cake__balloon, .cake.is-cheering .cake__balloon { animation: none; }
 }
 
 /* Number candles stand on the frosting; bottoms tuck slightly into it.

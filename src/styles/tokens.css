@@ -36,9 +36,9 @@
   --gradient-celebration: linear-gradient(135deg, #3A1F5D 0%, #7A3C9E 30%, #D1478A 60%, #F2956E 85%, #F6C453 100%);
 
   /* Typography */
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-script: 'Caveat', cursive;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  --font-script: 'Dancing Script', cursive;
 
   --fs-hero: clamp(2.6rem, 7vw, 6rem);
   --fs-h1: clamp(2.2rem, 5vw, 4rem);

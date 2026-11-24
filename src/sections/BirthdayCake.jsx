@@ -4,6 +4,7 @@ import { SectionWrapper, SectionHeading } from "../components/common/SectionWrap
 import { NumberCandle } from "../components/birthday/NumberCandle";
 import { CardsReveal } from "../components/birthday/CardsReveal";
 import { FlowerIcon } from "../components/ui/Icons";
+import { Balloon } from "../components/ui/Balloon";
 import { useRevealAnimation } from "../hooks/useRevealAnimation";
 import { useInView } from "../hooks/useInView";
 import { birthdayConfig } from "../data/birthdayConfig";
@@ -29,13 +30,18 @@ export function BirthdayCake() {
   const [showCards, setShowCards] = useState(false);
   const [done, setDone] = useState(false);
   const containerRef = useRevealAnimation({ selector: ".cake-reveal", y: 50, stagger: 0.15 });
-  const [triggerRef, inView] = useInView({ threshold: 0.45, once: false });
+  // Start only once the cake itself is properly on screen; stop only when the
+  // whole section is gone — scrolling down to the cards must not cancel it.
+  const [cakeRef, cakeVisible] = useInView({ threshold: 0.6, once: false });
+  const [sectionRef, sectionVisible] = useInView({ threshold: 0, once: false });
   const timers = useRef([]);
   const doneRef = useRef(false);
+  const runningRef = useRef(false);
 
   const schedule = (fn, ms) => timers.current.push(setTimeout(fn, ms));
 
   const runSequence = () => {
+    runningRef.current = true;
     setLit(DIGITS.map(() => true));
     setWishing(true);
     setCheering(false);
@@ -74,6 +80,7 @@ export function BirthdayCake() {
       schedule(() => {
         setDone(true);
         doneRef.current = true;
+        runningRef.current = false;
       }, songMs);
     }, lastBlowAt + 800);
 
@@ -85,16 +92,30 @@ export function BirthdayCake() {
   const stopSequence = () => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
+    runningRef.current = false;
     stopMusic();
     unduckMusic();
   };
 
   useEffect(() => {
-    if (inView && !doneRef.current) runSequence();
-    if (!inView) stopSequence();
-    return stopSequence;
+    if (cakeVisible && !doneRef.current && !runningRef.current) runSequence();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inView]);
+  }, [cakeVisible]);
+
+  // Leaving the section entirely cuts everything; an unfinished run restarts
+  // cleanly from the wish next time the cake comes back into view.
+  useEffect(() => {
+    if (!sectionVisible && runningRef.current) stopSequence();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionVisible]);
+
+  useEffect(
+    () => () => {
+      if (runningRef.current) stopSequence();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const replay = () => {
     stopSequence();
@@ -104,11 +125,12 @@ export function BirthdayCake() {
 
   return (
     <SectionWrapper id="cake" bgVariant="plum">
-      <div ref={triggerRef}>
+      <div ref={sectionRef}>
+      <div>
         <SectionHeading
           eyebrow="Make A Wish"
-          title="One Cake, Two Candles, Infinite Wishes"
-          lead="Sit back — the candles blow themselves out."
+          title="One Cake, Two Candles, *Infinite Wishes*"
+          lead="Sit back — the candles *blow themselves out*."
         />
       </div>
 
@@ -135,7 +157,13 @@ export function BirthdayCake() {
           <PartyBoy cheering={cheering} />
         </div>
 
-        <div className="cake cake-reveal">
+        <div ref={cakeRef} className={`cake cake-reveal ${cheering ? "is-cheering" : ""}`}>
+          <span className="cake__balloon cake__balloon--left" aria-hidden="true">
+            <Balloon color="#FF8FB1" size={30} />
+          </span>
+          <span className="cake__balloon cake__balloon--right" aria-hidden="true">
+            <Balloon color="#4CC9F0" size={26} />
+          </span>
           <div className="cake__candles">
             {DIGITS.map((digit, i) => (
               <NumberCandle key={i} digit={digit} index={i} lit={lit[i]} />
@@ -179,6 +207,7 @@ export function BirthdayCake() {
         )}
 
         <CardsReveal active={showCards} />
+      </div>
       </div>
     </SectionWrapper>
   );

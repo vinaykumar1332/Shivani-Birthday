@@ -2,7 +2,9 @@ import { Fragment, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { SectionWrapper, SectionHeading } from "../components/common/SectionWrapper";
+import { SmoothImage } from "../components/ui/SmoothImage";
 import { birthdayConfig } from "../data/birthdayConfig";
+import { splitEmphasis } from "../utils/emphasis";
 import { playCrackers, playMagicChime } from "../utils/sound";
 import "./GiftBox.css";
 
@@ -27,7 +29,7 @@ function Bow() {
 export function GiftBox() {
   const [open, setOpen] = useState(false);
   const { giftBox, friendName } = birthdayConfig;
-  const words = giftBox.message.split(" ");
+  const words = splitEmphasis(giftBox.message);
 
   const handleOpen = () => {
     if (open) return;
@@ -41,8 +43,8 @@ export function GiftBox() {
     <SectionWrapper id="gift" bgVariant="plum">
       <SectionHeading
         eyebrow="A Little Something"
-        title="There's A Surprise Waiting For You"
-        lead="Tap the box when you're ready. No rush — it's not going anywhere."
+        title="There's A *Surprise* Waiting For You"
+        lead="Tap the box when you're ready. *No rush* — it's not going anywhere."
       />
 
       <div className="gift-stage">
@@ -67,7 +69,7 @@ export function GiftBox() {
                 animate={{ y: -150, scale: 1, opacity: 1, rotate: -3 }}
                 transition={{ delay: 0.35, type: "spring", stiffness: 110, damping: 14 }}
               >
-                <img src={giftBox.photo} alt={`${friendName} smiling`} decoding="async" />
+                <SmoothImage src={giftBox.photo} alt={`${friendName} smiling`} parallax={7} />
                 <figcaption>{giftBox.photoCaption}</figcaption>
               </motion.figure>
             )}
@@ -103,10 +105,10 @@ export function GiftBox() {
         {open && (
           <div className="gift-message" aria-live="polite">
             <p>
-              {words.map((w, i) => (
+              {words.map(({ word: w, em }, i) => (
                 <Fragment key={i}>
                   <motion.span
-                    className="gift-message__word"
+                    className={`gift-message__word ${em ? "em-accent" : ""}`}
                     initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     transition={{ delay: 0.9 + i * 0.035, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}

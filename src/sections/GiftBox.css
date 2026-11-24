@@ -166,3 +166,5 @@
 @media (prefers-reduced-motion: reduce) {
   .gift-hint { animation: none; }
 }
+
+.gift-photo .smooth-img-frame { border-radius: 3px; }

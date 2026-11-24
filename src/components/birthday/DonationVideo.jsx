@@ -1,38 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useInView } from "../../hooks/useInView";
-import { duckMusic, unduckMusic } from "../../utils/backgroundMusic";
 import "./DonationVideo.css";
 
-// Plays muted only while on screen (browsers allow muted autoplay), pauses
-// when scrolled away, and offers a tap-to-unmute so she can hear it.
+// Always muted (the background music keeps playing); plays only while on
+// screen and pauses when scrolled away.
 export function DonationVideo({ src, poster, title, caption }) {
   const videoRef = useRef(null);
   const [frameRef, inView] = useInView({ threshold: 0.5, once: false });
-  const [muted, setMuted] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (inView) {
-      video.play().catch(() => {});
-      if (!video.muted) duckMusic(Infinity);
-    } else {
-      video.pause();
-      unduckMusic();
-    }
+    if (inView) video.play().catch(() => {});
+    else video.pause();
   }, [inView]);
-
-  const toggleSound = () => {
-    const video = videoRef.current;
-    video.muted = !video.muted;
-    setMuted(video.muted);
-    // With the video's own sound on, the background music steps aside.
-    if (video.muted) unduckMusic();
-    else {
-      duckMusic(Infinity);
-      video.play().catch(() => {});
-    }
-  };
 
   return (
     <figure className="donation-video">
@@ -45,11 +26,9 @@ export function DonationVideo({ src, poster, title, caption }) {
           loop
           playsInline
           preload="metadata"
+          disablePictureInPicture
           aria-label={title}
         />
-        <button className="donation-video__sound" onClick={toggleSound}>
-          {muted ? "🔊 Tap for sound" : "🔇 Mute"}
-        </button>
       </div>
       <figcaption>
         <strong>{title}</strong>

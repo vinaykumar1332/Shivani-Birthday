@@ -4,6 +4,7 @@ import { SectionWrapper, SectionHeading } from "../components/common/SectionWrap
 import { ScratchCard } from "../components/ui/ScratchCard";
 import { DonationGallery } from "../components/birthday/DonationGallery";
 import { DonationVideo } from "../components/birthday/DonationVideo";
+import { QuoteCard } from "../components/birthday/QuoteCard";
 import { useInView } from "../hooks/useInView";
 import { birthdayConfig } from "../data/birthdayConfig";
 import { playMagicChime } from "../utils/sound";
@@ -104,11 +105,7 @@ export function CharityReveal() {
 
             <DonationVideo src={d.video.src} poster={d.video.poster} title={d.video.title} caption={d.video.caption} />
 
-            <blockquote className="charity__quote">
-              <span className="charity__quote-mark" aria-hidden="true">“</span>
-              <p>{d.quote.text}</p>
-              <footer>{d.quote.signoff}</footer>
-            </blockquote>
+            <QuoteCard text={d.quote.text} signoff={d.quote.signoff} highlight={d.quote.highlight} />
           </>
         )}
       </div>

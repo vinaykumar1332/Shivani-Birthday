@@ -1,0 +1,127 @@
+.quote-card-wrap {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+}
+
+.quote-card {
+  position: relative;
+  margin: 0;
+  padding: clamp(2.6rem, 6vw, 3.6rem) clamp(1.3rem, 5vw, 3.2rem) clamp(1.8rem, 4vw, 2.6rem);
+  border-radius: 28px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 255, 255, 0.75), transparent 70%),
+    linear-gradient(160deg, #FFF4EC 0%, #FBE3E6 55%, #F3E2F8 100%);
+  box-shadow:
+    0 30px 70px rgba(122, 38, 70, 0.28),
+    0 8px 20px rgba(122, 38, 70, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* A slowly rotating gradient border, drawn with a masked conic gradient. */
+.quote-card__border {
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--quote-angle, 0deg), #F6C453, #F29A9A, #C77DFF, #FF8FB1, #F6C453);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.85;
+  animation: quote-border-spin 6s linear infinite;
+  pointer-events: none;
+}
+@property --quote-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes quote-border-spin { to { --quote-angle: 360deg; } }
+
+/* One bright sweep across the card once the words have landed. */
+.quote-card__shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.7) 50%, transparent 65%) -150% 0 / 60% 100% no-repeat;
+}
+.quote-card.is-in .quote-card__shine { animation: quote-shine 1.4s ease-in-out 1 both; }
+@keyframes quote-shine { to { background-position: 250% 0; } }
+
+.quote-card__mark {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% -48%;
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F72585, #B5179E);
+  box-shadow: 0 12px 28px rgba(181, 23, 158, 0.4), 0 0 0 6px rgba(255, 244, 236, 0.9);
+}
+.quote-card__mark-inner {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  line-height: 1;
+  margin-top: 0.42em;
+  color: #FFF4EC;
+  animation: quote-float 3.6s ease-in-out infinite;
+}
+@keyframes quote-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -3px; }
+}
+
+.quote-card__deco { position: absolute; opacity: 0.9; animation: quote-float-deco 5s ease-in-out infinite; }
+.quote-card__deco--tl { top: 14px; left: 16px; }
+.quote-card__deco--tr { top: 18px; right: 22px; animation-delay: -1.6s; }
+.quote-card__deco--br { bottom: 16px; right: 18px; animation-delay: -3s; }
+@keyframes quote-float-deco {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(14deg); }
+}
+
+.quote-card__text {
+  position: relative;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 2.6vw, 1.65rem);
+  line-height: 1.55;
+  color: var(--color-plum-deep);
+}
+.quote-card__word { display: inline-block; }
+.quote-card__word--key {
+  font-weight: 700;
+  background: linear-gradient(90deg, #D1478A, #B5179E, #7B2CBF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.quote-card__signoff {
+  display: inline-block;
+  margin-top: clamp(1rem, 3vw, 1.4rem);
+  font-family: var(--font-script);
+  font-size: clamp(1.25rem, 3.4vw, 1.5rem);
+  color: #B5179E;
+}
+
+@media (max-width: 640px) {
+  .quote-card { border-radius: 22px; }
+  .quote-card__mark { width: 60px; height: 60px; }
+  .quote-card__mark-inner { font-size: 3.3rem; }
+  .quote-card__deco--tl { top: 10px; left: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote-card__border, .quote-card__mark-inner, .quote-card__deco, .quote-card.is-in .quote-card__shine { animation: none; }
+}

@@ -145,3 +145,5 @@
 @media (prefers-reduced-motion: reduce) {
   .final, .final__particle, .final__butterfly, .final__flower { animation: none !important; }
 }
+
+.final__photo .smooth-img-frame { border-radius: 3px; }

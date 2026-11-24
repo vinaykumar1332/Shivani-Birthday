@@ -90,6 +90,31 @@ img { max-width: 100%; display: block; }
   will-change: transform;
 }
 
+/* Italic accent for *emphasized* words. Sections on light backgrounds set
+   --em-gradient to a deeper tone so it stays readable. */
+.em-accent {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "opsz" 72;
+  background: var(--em-gradient, linear-gradient(90deg, #FFD27A 0%, #FF9EB8 55%, #E3B6FF 100%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.18));
+  /* Italic glyphs lean past their box; the padding keeps them from clipping. */
+  padding-right: 0.12em;
+  margin-right: -0.12em;
+}
+.split-word--em { padding-right: 0.2em; margin-right: -0.2em; }
+.section-wrap--gold, .quote-card, .gcard__inside {
+  --em-gradient: linear-gradient(90deg, #B5179E 0%, #7B2CBF 100%);
+}
+.final { --em-gradient: linear-gradient(90deg, #FFF3C4 0%, #FFD27A 100%); }
+
+h1, h2, h3, .section-heading__title { letter-spacing: -0.015em; }
+
 .visually-hidden {
   position: absolute;
   width: 1px; height: 1px;

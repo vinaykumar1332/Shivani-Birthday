@@ -180,6 +180,60 @@
   border-top-color: #FFF8EF;
 }
 
+/* The send-off crew, cheering from the riverside on the right. */
+.dreams__crew {
+  position: absolute;
+  right: 3%;
+  bottom: 2%;
+  z-index: 4;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(0.1rem, 1.2vw, 1rem);
+}
+.dreams__member { position: relative; width: clamp(54px, 9vw, 112px); }
+.dreams__member svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.45)); }
+
+.dreams__member-bob { animation: dreams-bob 2.4s ease-in-out infinite; transform-origin: bottom center; }
+@keyframes dreams-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+}
+/* A joyful jump, rippling through the crew one after another. */
+.dreams__crew.is-cheering .dreams__member-bob { animation: dreams-jump 0.6s cubic-bezier(0.3, 0, 0.4, 1) infinite; }
+.dreams__crew.is-cheering .dreams__member:nth-child(2) .dreams__member-bob { animation-delay: 0.1s; }
+.dreams__crew.is-cheering .dreams__member:nth-child(3) .dreams__member-bob { animation-delay: 0.2s; }
+.dreams__crew.is-cheering .dreams__member:nth-child(4) .dreams__member-bob { animation-delay: 0.3s; }
+@keyframes dreams-jump {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  15% { transform: translateY(0) scale(1.06, 0.92); }
+  50% { transform: translateY(-22px) scale(0.96, 1.05) rotate(-3deg); }
+  85% { transform: translateY(0) scale(1.04, 0.95); }
+}
+.dreams .dreams__grad { transition: transform 0.4s ease; }
+.dreams:has(.dreams__crew.is-cheering) .dreams__grad { transform: translateY(-10px); }
+
+.dreams__member-bubble-anchor {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  translate: -50% 0;
+  margin-bottom: 0.3rem;
+}
+.dreams__member-bubble-anchor[data-edge="end"] { left: auto; right: 0; translate: none; }
+.dreams__member-bubble {
+  width: max-content;
+  max-width: 150px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 14px;
+  background: #FFF8EF;
+  color: var(--color-plum-deep);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
 .dreams__ticket {
   position: relative;
   z-index: 5;
@@ -192,6 +246,13 @@
   .dreams__grad { width: 118px; left: 2%; }
   .dreams__bubble { font-size: 0.78rem; max-width: 150px; }
   .dreams__ticket { margin-top: var(--space-md); }
+  .dreams__crew { right: 1%; gap: 0; }
+  .dreams__member { width: clamp(46px, 14vw, 60px); }
+  .dreams__member-bubble { font-size: 0.7rem; max-width: 110px; padding: 0.35rem 0.55rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dreams__member-bob, .dreams__crew.is-cheering .dreams__member-bob { animation: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

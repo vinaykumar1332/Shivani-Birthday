@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FireworksCanvas } from "../components/fireworks/FireworksCanvas";
 import { SparklerGirl, FuseMonkey, PartyBoy, PartyBear, GraduateWoman } from "../components/characters/Characters";
 import { birthdayConfig } from "../data/birthdayConfig";
+import { Emphasized } from "../components/ui/SplitWords";
 import { serverNow, unlockTime } from "../utils/serverTime";
 import { DAY_MS, splitRemaining as split } from "../utils/unlock";
 import "./Countdown.css";
@@ -228,7 +229,7 @@ export function Countdown({ onUnlock }) {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6, duration: 0.7 }}
               >
-                {countdown.subtitle}
+                <Emphasized text={countdown.subtitle} />
               </motion.p>
 
               <motion.div
