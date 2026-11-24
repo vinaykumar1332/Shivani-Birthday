@@ -1,0 +1,129 @@
+.boarding-pass {
+  display: flex;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  border-radius: 20px;
+  background: #FFF8EF;
+  color: var(--color-plum-deep);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  text-align: left;
+}
+
+.boarding-pass__main {
+  flex: 1;
+  padding: 1.2rem 1.4rem;
+  min-width: 0;
+}
+
+.boarding-pass__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(48, 36, 63, 0.12);
+}
+.boarding-pass__label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #D1478A;
+}
+.boarding-pass__airline { font-family: var(--font-script); font-size: 1.3rem; color: #7B2CBF; }
+
+.boarding-pass__route {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+.boarding-pass__route > div:not(.boarding-pass__path) {
+  display: flex;
+  flex-direction: column;
+}
+.boarding-pass__route strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 6vw, 2.2rem);
+  line-height: 1;
+}
+.boarding-pass__route span { font-size: 0.75rem; color: rgba(29, 21, 41, 0.6); }
+.boarding-pass__dest { text-align: right; }
+
+/* Dotted route with a plane that loops along it forever. */
+.boarding-pass__path {
+  position: relative;
+  flex: 1;
+  height: 24px;
+  background: radial-gradient(circle, rgba(29, 21, 41, 0.35) 1.5px, transparent 2px) repeat-x center / 10px 4px;
+}
+.boarding-pass__plane {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  font-size: 1.2rem;
+  color: #7B2CBF;
+  transform: translate(-50%, -55%);
+  animation: route-fly 4.5s ease-in-out infinite;
+}
+@keyframes route-fly {
+  0% { left: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+.boarding-pass__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.7rem 1rem;
+  margin: 0;
+}
+.boarding-pass__fields dt {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(29, 21, 41, 0.55);
+}
+.boarding-pass__fields dd { margin: 0.15rem 0 0; font-weight: 700; font-size: 0.92rem; }
+
+/* Tear-off stub with a perforated edge and barcode. */
+.boarding-pass__stub {
+  position: relative;
+  width: 92px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 0.6rem;
+  background: linear-gradient(160deg, #7B2CBF, #D1478A);
+  color: #FFF8EF;
+}
+.boarding-pass__stub::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 0;
+  bottom: 0;
+  border-left: 3px dashed rgba(255, 248, 239, 0.9);
+}
+.boarding-pass__stub-seat { font-family: var(--font-display); font-size: 2rem; font-weight: 800; }
+.boarding-pass__barcode {
+  width: 54px;
+  height: 70px;
+  background: repeating-linear-gradient(90deg, #FFF8EF 0 2px, transparent 2px 4px, #FFF8EF 4px 5px, transparent 5px 8px);
+  opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+  .boarding-pass__main { padding: 1rem; }
+  .boarding-pass__stub { width: 70px; }
+  .boarding-pass__barcode { width: 40px; height: 56px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boarding-pass__plane { animation: none; left: 50%; }
+}

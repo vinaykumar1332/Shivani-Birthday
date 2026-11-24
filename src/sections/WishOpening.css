@@ -231,46 +231,8 @@
   justify-content: center;
 }
 
-.firework {
-  position: absolute;
-  bottom: 6%;
-}
-
-.firework--rocket {
-  font-size: 2.2rem;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.45));
-  animation-name: rocket-launch;
-  animation-timing-function: cubic-bezier(0.3, 0.6, 0.2, 1);
-  animation-fill-mode: forwards;
-}
-
-@keyframes rocket-launch {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  85% { opacity: 1; }
-  100% { transform: translateY(-62vh) rotate(-8deg); opacity: 0.9; }
-}
-
-.firework--burst {
-  bottom: auto;
-  top: 32%;
-  width: 0;
-  height: 0;
-}
-
-.firework__dot {
-  position: absolute;
-  top: 0; left: 0;
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  transform: rotate(var(--ang)) translateX(0);
-  box-shadow: 0 0 10px 2px currentColor;
-  animation: firework-dot-burst 0.7s ease-out forwards;
-}
-
-@keyframes firework-dot-burst {
-  0% { transform: rotate(var(--ang)) translateX(0) scale(1); opacity: 1; }
-  100% { transform: rotate(var(--ang)) translateX(90px) scale(0.3); opacity: 0; }
-}
+/* Real fireworks canvas: above the sky layers, below the text. */
+.wish__fw-canvas { z-index: 1; }
 
 .wish__age {
   display: inline-block;
@@ -286,6 +248,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wish, .wish__glow, .wish__sparkle, .wish__cake, .wish__cta, .wish__cta-shimmer,
-  .wish__orb, .wish__garland-light, .wish__cake-spotlight,
-  .firework--rocket, .firework__dot { animation: none !important; }
+  .wish__orb, .wish__garland-light, .wish__cake-spotlight { animation: none !important; }
 }

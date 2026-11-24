@@ -1,45 +1,59 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { Button } from "../components/ui/Button";
+import { ButterflyIcon, FlowerIcon, SparkleIcon } from "../components/ui/Icons";
+import { SplitWords } from "../components/ui/SplitWords";
 import { useParallax } from "../hooks/useParallax";
 import { birthdayConfig } from "../data/birthdayConfig";
 import "./Hero.css";
 
 const DECOR = [
-  { type: "🦋", top: "16%", left: "8%", size: 2.4, dur: 7 },
-  { type: "🦋", top: "60%", left: "90%", size: 2, dur: 8.5 },
-  { type: "🦋", top: "80%", left: "6%", size: 1.6, dur: 6.5 },
-  { type: "🦋", top: "30%", left: "88%", size: 1.8, dur: 9 },
-  { type: "🌸", top: "78%", left: "16%", size: 2, dur: 9 },
-  { type: "🌼", top: "20%", left: "78%", size: 1.6, dur: 7.5 },
-  { type: "🌺", top: "88%", left: "72%", size: 1.8, dur: 8 },
-  { type: "🌷", top: "10%", left: "45%", size: 1.4, dur: 6.8 },
-  { type: "✨", top: "40%", left: "15%", size: 1.2, dur: 5 },
-  { type: "✨", top: "55%", left: "80%", size: 1.2, dur: 5.6 },
-  { type: "✨", top: "12%", left: "62%", size: 1, dur: 4.6 },
+  { kind: "butterfly", top: "16%", left: "8%", size: 56, dur: 7, wing: "#B8A1E3", wingLight: "#F29A9A" },
+  { kind: "butterfly", top: "62%", left: "88%", size: 48, dur: 8.5, wing: "#F29A9A", wingLight: "#FFC69B" },
+  { kind: "butterfly", top: "80%", left: "6%", size: 38, dur: 6.5, wing: "#FFA363", wingLight: "#FFE38B" },
+  { kind: "butterfly", top: "26%", left: "86%", size: 42, dur: 9, wing: "#9478CF", wingLight: "#B8A1E3" },
+  { kind: "flower", top: "76%", left: "18%", size: 44, dur: 9 },
+  { kind: "flower", top: "18%", left: "74%", size: 34, dur: 7.5 },
+  { kind: "flower", top: "86%", left: "74%", size: 40, dur: 8 },
+  { kind: "sparkle", top: "40%", left: "14%", size: 22, dur: 5 },
+  { kind: "sparkle", top: "52%", left: "82%", size: 20, dur: 5.6 },
+  { kind: "sparkle", top: "10%", left: "58%", size: 18, dur: 4.6 },
 ];
 
+function DecorItem({ d }) {
+  if (d.kind === "butterfly") return <ButterflyIcon size={d.size} wing={d.wing} wingLight={d.wingLight} />;
+  if (d.kind === "flower") return <FlowerIcon size={d.size} />;
+  return <SparkleIcon size={d.size} />;
+}
+
 export function Hero({ onBegin }) {
-  const titleRef = useRef(null);
-  const subRef = useRef(null);
-  const ctaRef = useRef(null);
-  const badgeRef = useRef(null);
+  const rootRef = useRef(null);
   const layer1 = useParallax(0.15);
   const layer2 = useParallax(0.3);
+  const { friendName, hero } = birthdayConfig;
 
   useEffect(() => {
-    const chars = titleRef.current.querySelectorAll(".hero__word");
-    const tl = gsap.timeline({ delay: 0.15 });
-    tl.fromTo(badgeRef.current, { opacity: 0, y: -16, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.8)" })
-      .fromTo(chars, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.08, ease: "power3.out" }, "-=0.2")
-      .fromTo(subRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.3")
-      .fromTo(ctaRef.current, { opacity: 0, y: 20, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.6 }, "-=0.4");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ctx = gsap.context(() => {
+      gsap
+        .timeline({ delay: 0.15 })
+        .from(".hero__portrait", { opacity: 0, scale: 0.6, rotate: -12, duration: 0.9, ease: "back.out(1.6)" })
+        .from(".hero__badge", { opacity: 0, y: -16, scale: 0.8, duration: 0.5, ease: "back.out(1.8)" }, "-=0.45")
+        .from(
+          ".hero__title .split-word__inner",
+          { yPercent: 115, rotate: 6, opacity: 0, duration: 0.9, stagger: 0.07, ease: "power4.out" },
+          "-=0.2"
+        )
+        .from(".hero__subtext", { opacity: 0, y: 20, filter: "blur(6px)", duration: 0.8 }, "-=0.45")
+        .from(".hero__cta-wrap", { opacity: 0, y: 20, scale: 0.9, duration: 0.6, ease: "back.out(1.6)" }, "-=0.4");
+    }, rootRef);
+
+    return () => ctx.revert();
   }, []);
 
-  const headlineWords = birthdayConfig.hero.headline.split(" ");
-
   return (
-    <section className="hero" aria-label="Welcome">
+    <section ref={rootRef} className="hero" aria-label="Welcome">
       <div className="hero__aurora" aria-hidden="true" />
       <div ref={layer1} className="hero__bg-layer hero__bg-layer--1" aria-hidden="true">
         <span className="hero__orb hero__orb--1" />
@@ -56,28 +70,40 @@ export function Hero({ onBegin }) {
           <span
             key={i}
             className="hero__decor"
-            style={{ top: d.top, left: d.left, fontSize: `${d.size}rem`, animationDuration: `${d.dur}s`, animationDelay: `${i * -0.6}s` }}
+            style={{ top: d.top, left: d.left, animationDuration: `${d.dur}s`, animationDelay: `${i * -0.6}s` }}
           >
-            {d.type}
+            <DecorItem d={d} />
           </span>
         ))}
       </div>
 
       <div className="hero__content container">
-        <span ref={badgeRef} className="hero__badge">✨ For {birthdayConfig.friendName} ✨</span>
-        <h1 ref={titleRef} className="hero__title">
-          {headlineWords.map((w, i) => {
-            const isName = w.replace(/[^a-zA-Z]/g, "") === birthdayConfig.friendName;
-            return (
-              <span className={`hero__word ${isName ? "hero__word--name" : ""}`} key={i}>
-                {w}&nbsp;
-              </span>
-            );
-          })}
+        <div className="hero__portrait">
+          <img
+            src={hero.portrait}
+            alt={`${friendName}, the birthday girl`}
+            width="140"
+            height="140"
+            decoding="async"
+            fetchPriority="high"
+          />
+          <FlowerIcon size={34} className="hero__portrait-flower hero__portrait-flower--a" />
+          <FlowerIcon size={26} className="hero__portrait-flower hero__portrait-flower--b" petal="#B8A1E3" petalLight="#E9DEFF" />
+        </div>
+
+        <span className="hero__badge">
+          <SparkleIcon size={14} /> For {friendName} <SparkleIcon size={14} />
+        </span>
+
+        <h1 className="hero__title">
+          <SplitWords
+            text={hero.headline}
+            wordClassName={(w) => (w.replace(/[^a-zA-Z]/g, "") === friendName ? "hero__word--name" : "")}
+          />
         </h1>
-        <p ref={subRef} className="hero__subtext">{birthdayConfig.hero.subtext}</p>
-        <div ref={ctaRef} className="hero__cta-wrap">
-          <Button variant="primary" onClick={onBegin}>{birthdayConfig.hero.cta} →</Button>
+        <p className="hero__subtext">{hero.subtext}</p>
+        <div className="hero__cta-wrap">
+          <Button variant="primary" onClick={onBegin}>{hero.cta} →</Button>
         </div>
       </div>
 

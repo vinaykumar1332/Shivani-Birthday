@@ -1,0 +1,199 @@
+.dreams {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  padding-bottom: var(--space-2xl);
+  /* Blends from the gold charity section above into a London sunset. */
+  background: linear-gradient(180deg, #1A1030 0%, #2D1B4E 100%);
+  color: var(--color-cream);
+}
+
+/* Freeze all looping CSS animation while off-screen (saves battery). */
+.dreams.is-paused * { animation-play-state: paused !important; }
+
+.dreams__head {
+  position: relative;
+  z-index: 5;
+  padding-top: var(--space-2xl);
+}
+.dreams .section-heading { margin-bottom: var(--space-lg); }
+.dreams .section-heading__title { color: var(--color-cream); }
+.dreams .section-heading__lead { color: rgba(255, 248, 239, 0.78); }
+.dreams .eyebrow { color: var(--color-peach); }
+
+/* ---- the scene ---- */
+.dreams__scene {
+  position: relative;
+  height: clamp(520px, 80svh, 780px);
+  overflow: hidden;
+}
+
+.dreams__sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #1B1446 0%, #3B2667 30%, #8E3F7E 55%, #E0716B 72%, #F6B26B 84%, #F9D79A 100%);
+}
+
+.dreams__sun {
+  position: absolute;
+  left: 30%;
+  bottom: 30%;
+  width: 180px;
+  height: 180px;
+  margin-left: -90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #FFF3C4 0%, #FFD27A 40%, rgba(255, 160, 90, 0) 72%);
+  filter: blur(2px);
+  animation: sun-glow 6s ease-in-out infinite;
+}
+@keyframes sun-glow {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+.dreams__star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  animation: dream-twinkle 3.2s ease-in-out infinite;
+}
+@keyframes dream-twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+/* Soft clouds drifting at different depths and speeds. */
+.dreams__cloud {
+  position: absolute;
+  left: 0;
+  width: 280px;
+  height: 70px;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 40% 60% at 30% 60%, rgba(255, 228, 220, 0.75), transparent 70%),
+    radial-gradient(ellipse 45% 70% at 60% 45%, rgba(255, 236, 228, 0.8), transparent 70%),
+    radial-gradient(ellipse 35% 55% at 82% 65%, rgba(255, 220, 210, 0.7), transparent 70%);
+  filter: blur(4px);
+  animation: cloud-drift linear infinite;
+  pointer-events: none;
+}
+.dreams__cloud--1 { top: 12%; animation-duration: 95s; animation-delay: -20s; opacity: 0.55; }
+.dreams__cloud--2 { top: 26%; width: 200px; animation-duration: 70s; animation-delay: -50s; opacity: 0.45; }
+.dreams__cloud--3 { top: 6%; width: 340px; animation-duration: 120s; animation-delay: -90s; opacity: 0.35; }
+.dreams__cloud--near {
+  top: 40%;
+  width: 380px;
+  height: 90px;
+  z-index: 3;
+  opacity: 0.35;
+  animation-duration: 55s;
+  animation-delay: -10s;
+}
+@keyframes cloud-drift {
+  from { transform: translateX(-420px); }
+  to { transform: translateX(calc(100vw + 60px)); }
+}
+
+.dreams__planes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Skyline sits on the river; its viewBox bottom lines up with the waterline. */
+.dreams__city {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22%;
+  height: 62%;
+  z-index: 2;
+}
+
+.dreams__river {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  z-index: 2;
+  overflow: hidden;
+  background: linear-gradient(180deg, #4A2C5E 0%, #2A1B45 60%, #170F2B 100%);
+}
+.dreams__reflection {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 282%; /* matches the skyline height (62% / 22%) so it mirrors 1:1 */
+  pointer-events: none;
+}
+.dreams__shimmer {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(180deg, transparent 0 7px, rgba(255, 210, 150, 0.16) 7px 8px);
+  mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+  animation: river-shimmer 6s linear infinite;
+}
+@keyframes river-shimmer {
+  from { background-position: 0 0; transform: translateX(-12px); }
+  50% { transform: translateX(12px); }
+  to { background-position: 0 16px; transform: translateX(-12px); }
+}
+
+/* The graduate stands on the riverside promenade in the foreground. */
+.dreams__grad {
+  position: absolute;
+  left: 4%;
+  bottom: 2%;
+  width: clamp(130px, 18vw, 210px);
+  z-index: 4;
+}
+.dreams__grad svg { width: 100%; height: auto; filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.45)); }
+
+.dreams__bubble {
+  position: absolute;
+  bottom: 96%;
+  left: 40%;
+  width: max-content;
+  max-width: 210px;
+  padding: 0.6rem 0.9rem;
+  border-radius: 16px;
+  background: #FFF8EF;
+  color: var(--color-plum-deep);
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  transform-origin: bottom left;
+}
+.dreams__bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 22px;
+  border: 8px solid transparent;
+  border-top-color: #FFF8EF;
+}
+
+.dreams__ticket {
+  position: relative;
+  z-index: 5;
+  margin-top: calc(var(--space-lg) * -1);
+}
+
+@media (max-width: 640px) {
+  .dreams__scene { height: clamp(440px, 72svh, 600px); }
+  .dreams__sun { width: 120px; height: 120px; margin-left: -60px; left: 22%; }
+  .dreams__grad { width: 118px; left: 2%; }
+  .dreams__bubble { font-size: 0.78rem; max-width: 150px; }
+  .dreams__ticket { margin-top: var(--space-md); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dreams__sun, .dreams__star, .dreams__cloud, .dreams__shimmer { animation: none; }
+}

@@ -3,42 +3,175 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: var(--space-md);
-  max-width: 640px;
+  gap: var(--space-xl);
+  max-width: 980px;
   margin: 0 auto;
 }
 
-.charity__title {
-  font-size: var(--fs-h1);
-  color: var(--color-plum-deep);
-}
+.charity .section-heading { margin-bottom: 0; }
 
-.charity__lead {
-  font-size: var(--fs-lead);
-  line-height: var(--lh-relaxed);
-}
-
-.charity__scratch-wrap { margin: var(--space-lg) 0; }
-
-.charity__detail p { margin-bottom: 0.3rem; font-size: 0.95rem; }
-
-.charity__card {
-  background: rgba(255,255,255,0.5);
-  border: 1px solid rgba(48,36,63,0.15);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+/* Scratch card beside the facts on desktop; stacked on mobile. */
+.charity__reveal-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: center;
   width: 100%;
 }
 
-.charity__card-label {
+.charity__scratch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.charity__reveal-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.charity__reveal-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2.2rem 1rem 0.9rem;
+  background: linear-gradient(180deg, transparent, rgba(29, 21, 41, 0.88));
+  color: var(--color-cream);
+  font-family: var(--font-script);
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.charity__scratch-hint {
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: rgba(29, 21, 41, 0.8);
+}
+
+.charity__card {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(48, 36, 63, 0.15);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  width: 100%;
+  text-align: left;
+  box-shadow: 0 16px 40px rgba(48, 36, 63, 0.15);
+}
+
+.charity__card-value {
+  margin-top: var(--space-xs);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-normal);
+  color: var(--color-plum-deep);
+}
+
+.charity__facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin: var(--space-md) 0 0;
+}
+.charity__facts dt {
   font-size: var(--fs-small);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  opacity: 0.75;
+  color: rgba(29, 21, 41, 0.65);
+}
+.charity__facts dd {
+  margin: 0.25rem 0 0;
+  font-size: 1.1rem;
+  line-height: var(--lh-normal);
+  color: var(--color-plum-deep);
 }
 
-.charity__card-value { margin-top: var(--space-xs); font-size: var(--fs-lead); }
-
 .charity__cert { margin-top: var(--space-sm); font-weight: 600; }
-.charity__cert--pending { opacity: 0.7; font-style: italic; font-weight: 400; }
+
+.charity__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+  background: rgba(48, 36, 63, 0.1);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-plum-deep);
+}
+
+.charity__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #E0A23B;
+  animation: status-pulse 1.6s ease-in-out infinite;
+}
+.charity__status--done .charity__status-dot {
+  background: #2F8F5B;
+  animation: none;
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.75); }
+}
+
+.charity__gallery { width: 100%; }
+
+.charity__subheading {
+  margin-bottom: var(--space-md);
+  font-size: var(--fs-h3);
+  color: var(--color-plum-deep);
+}
+
+/* Sentimental quote under the video. */
+.charity__quote {
+  position: relative;
+  max-width: 680px;
+  margin: 0;
+  padding: var(--space-xl) var(--space-lg) var(--space-lg);
+  background: rgba(255, 248, 239, 0.75);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 50px rgba(48, 36, 63, 0.18);
+}
+
+.charity__quote-mark {
+  position: absolute;
+  top: -0.35em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 6rem;
+  line-height: 1;
+  color: #D1478A;
+}
+
+.charity__quote p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+  line-height: 1.5;
+  color: var(--color-plum-deep);
+}
+
+.charity__quote footer {
+  margin-top: var(--space-md);
+  font-family: var(--font-script);
+  font-size: 1.4rem;
+  color: #B5179E;
+}
+
+@media (max-width: 820px) {
+  .charity__reveal-row { grid-template-columns: 1fr; justify-items: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .charity__status-dot { animation: none; }
+}

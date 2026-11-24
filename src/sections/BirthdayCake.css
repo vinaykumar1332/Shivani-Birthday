@@ -5,19 +5,95 @@
   gap: var(--space-lg);
 }
 
+/* Boy · cake · teddy in a row on desktop; on phones the cake takes the full
+   width and the two friends stand side by side underneath it. */
+.cake-scene {
+  display: grid;
+  grid-template-columns: 130px auto 130px;
+  grid-template-areas: "boy cake bear";
+  align-items: end;
+  gap: var(--space-md);
+}
+.cake-scene .cake { grid-area: cake; }
+.cake-friend--boy { grid-area: boy; }
+.cake-friend--bear { grid-area: bear; }
+
+.cake-friend {
+  position: relative;
+  width: 130px;
+}
+.cake-friend svg { width: 100%; height: auto; }
+
+.cake-bubble {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  width: 170px;
+  padding: 0.6rem 0.85rem;
+  border-radius: 16px;
+  background: #FFF8EF;
+  color: var(--color-plum-deep);
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  text-align: left;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  transform-origin: bottom left;
+  z-index: 3;
+}
+.cake-bubble::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 26px;
+  border: 8px solid transparent;
+  border-top-color: #FFF8EF;
+}
+.cake-bubble--right { left: auto; right: 0; transform-origin: bottom right; }
+.cake-bubble--right::after { left: auto; right: 26px; }
+
+@media (max-width: 720px) {
+  .cake-scene {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "cake cake" "boy bear";
+    justify-items: center;
+    row-gap: 4.5rem; /* room for the speech bubbles */
+  }
+  .cake-friend { width: 96px; }
+  .cake-bubble { width: 140px; font-size: 0.78rem; }
+}
+
 .cake {
   position: relative;
   width: min(300px, 80vw);
 }
 
+/* Number candles stand on the frosting; bottoms tuck slightly into it.
+   The top padding leaves room for the flames, which draw above the wick. */
 .cake__candles {
   display: flex;
   justify-content: center;
-  gap: var(--space-md);
-  margin-bottom: -6px;
+  align-items: flex-end;
+  gap: 14px;
+  padding-top: 90px;
+  margin-bottom: -10px;
   position: relative;
   z-index: 2;
 }
+
+.cake-wish-prompt {
+  min-height: 1.6em;
+  margin-bottom: calc(var(--space-lg) * -0.5);
+  font-family: var(--font-script);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  color: #FFE38B;
+  text-align: center;
+  text-shadow: 0 0 18px rgba(255, 227, 139, 0.45);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.cake-wish-prompt.is-visible { opacity: 1; transform: translateY(0); }
 
 .cake__layer {
   width: 100%;
@@ -30,9 +106,10 @@
 
 .cake__flower {
   position: absolute;
-  top: -10px;
-  font-size: 1.1rem;
+  top: -11px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
 }
+.cake__flower svg { display: block; }
 
 .cake-btn {
   background: var(--gradient-gold);

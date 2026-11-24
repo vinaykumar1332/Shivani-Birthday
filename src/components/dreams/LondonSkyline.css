@@ -1,0 +1,43 @@
+.london-skyline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Mirrored, softened copy shown in the Thames. */
+.london-skyline--reflection {
+  transform: scaleY(-1);
+  opacity: 0.28;
+  filter: blur(1.5px);
+}
+
+.sky-window { animation: window-glow 5s ease-in-out infinite; }
+@keyframes window-glow {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+.bigben-face { filter: drop-shadow(0 0 8px rgba(255, 233, 176, 0.85)); }
+.bigben-hand {
+  transform-box: view-box;
+  transform-origin: 170px 176px;
+  animation: clock-turn linear infinite;
+}
+.bigben-hand--minute { animation-duration: 3600s; }
+.bigben-hand--hour { animation-duration: 43200s; }
+@keyframes clock-turn { to { transform: rotate(360deg); } }
+
+.london-eye__wheel {
+  transform-box: view-box;
+  transform-origin: 1010px 235px;
+  animation: eye-turn 140s linear infinite;
+}
+@keyframes eye-turn { to { transform: rotate(360deg); } }
+
+.london-eye__capsule { animation: window-glow 4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-window, .london-eye__wheel, .london-eye__capsule { animation: none; }
+}

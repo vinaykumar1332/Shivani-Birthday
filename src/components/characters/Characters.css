@@ -1,0 +1,131 @@
+.char-girl, .char-monkey {
+  display: block;
+  overflow: visible;
+}
+
+/* Gentle idle bob so they feel alive. */
+.char-girl { animation: char-bob 2.4s ease-in-out infinite; }
+.char-monkey { animation: char-hop 1.8s ease-in-out infinite; }
+
+@keyframes char-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes char-hop {
+  0%, 60%, 100% { transform: translateY(0) scaleY(1); }
+  70% { transform: translateY(0) scaleY(0.94); }
+  82% { transform: translateY(-14px) scaleY(1.03); }
+  92% { transform: translateY(0) scaleY(0.97); }
+}
+
+/* Arms rotate around their shoulder joints (in SVG user units). */
+.char-girl__arm {
+  transform-box: view-box;
+  transform-origin: 104px 126px;
+}
+.char-girl.is-waving .char-girl__arm {
+  animation: girl-wave 0.9s ease-in-out infinite alternate;
+}
+@keyframes girl-wave {
+  from { transform: rotate(-10deg); }
+  to { transform: rotate(14deg); }
+}
+
+.char-monkey__arm {
+  transform-box: view-box;
+  transform-origin: 112px 132px;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.char-monkey.is-lighting .char-monkey__arm { transform: rotate(16deg); }
+
+.char-monkey__ember {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ember-glow 0.5s ease-in-out infinite alternate;
+}
+.char-monkey.is-lighting .char-monkey__ember { fill: #FFD166; }
+
+@keyframes ember-glow {
+  from { opacity: 0.6; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.25); }
+}
+
+/* Party boy: idle bounce; a happy wiggle-dance + waving arm when cheering. */
+.char-boy, .char-bear { display: block; overflow: visible; transform-origin: bottom center; }
+.char-boy { animation: char-bob 2s ease-in-out infinite; }
+.char-boy.is-cheering { animation: boy-dance 0.6s ease-in-out infinite alternate; }
+@keyframes boy-dance {
+  from { transform: rotate(-6deg) translateY(0); }
+  to { transform: rotate(6deg) translateY(-6px); }
+}
+.char-boy__arm-up {
+  transform-box: view-box;
+  transform-origin: 50px 106px;
+}
+.char-boy.is-cheering .char-boy__arm-up { animation: boy-wave 0.45s ease-in-out infinite alternate; }
+@keyframes boy-wave {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(14deg); }
+}
+
+/* Teddy: gentle sway; waves and the balloon bobs when cheering. */
+.char-bear { animation: bear-sway 3s ease-in-out infinite; }
+@keyframes bear-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+.char-bear__balloon {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  animation: balloon-bob 2.4s ease-in-out infinite;
+}
+@keyframes balloon-bob {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-6px) rotate(4deg); }
+}
+.char-bear__wave {
+  transform-box: view-box;
+  transform-origin: 44px 128px;
+}
+.char-bear.is-cheering .char-bear__wave { animation: bear-wave 0.5s ease-in-out infinite alternate; }
+@keyframes bear-wave {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(40deg); }
+}
+
+/* Graduate: gentle sway, a proud certificate "pump", a swinging tassel. */
+.char-grad { display: block; overflow: visible; transform-origin: bottom center; animation: char-bob 2.8s ease-in-out infinite; }
+.char-grad__arm {
+  transform-box: view-box;
+  transform-origin: 134px 120px;
+  animation: grad-pump 1.6s ease-in-out infinite alternate;
+}
+@keyframes grad-pump {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(6deg); }
+}
+.char-grad__tassel {
+  transform-box: view-box;
+  transform-origin: 105px 46px;
+  animation: tassel-swing 1.8s ease-in-out infinite alternate;
+}
+@keyframes tassel-swing {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(8deg); }
+}
+.char-grad__sparkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: grad-sparkle 1.4s ease-in-out infinite;
+}
+@keyframes grad-sparkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.6); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char-grad, .char-grad__arm, .char-grad__tassel, .char-grad__sparkle,
+  .char-girl, .char-monkey, .char-girl__arm, .char-monkey__ember,
+  .char-boy, .char-boy__arm-up, .char-bear, .char-bear__balloon, .char-bear__wave { animation: none !important; }
+}

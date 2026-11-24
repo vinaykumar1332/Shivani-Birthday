@@ -1,6 +1,7 @@
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,6 +92,7 @@
   animation: drift ease-in-out infinite;
   filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25));
 }
+.hero__decor svg { display: block; }
 
 @keyframes drift {
   0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -108,6 +110,38 @@
   padding-top: var(--space-xl);
   padding-bottom: var(--space-xl);
 }
+
+/* Her portrait: a gradient ring with a slow glow, two flowers tucked on the edge. */
+.hero__portrait {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  padding: 4px;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg, #F6C453, #F29A9A, #B8A1E3, #F6C453);
+  animation: portrait-glow 3.2s ease-in-out infinite;
+}
+
+.hero__portrait img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 30%;
+  border: 3px solid rgba(255, 248, 239, 0.9);
+}
+
+@keyframes portrait-glow {
+  0%, 100% { box-shadow: 0 0 24px 4px rgba(246, 196, 83, 0.35); }
+  50% { box-shadow: 0 0 44px 10px rgba(242, 154, 154, 0.5); }
+}
+
+.hero__portrait-flower {
+  position: absolute;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+.hero__portrait-flower--a { bottom: -2px; right: -6px; }
+.hero__portrait-flower--b { top: 4px; left: -4px; }
 
 .hero__badge {
   display: inline-flex;
@@ -133,12 +167,20 @@
   text-shadow: 0 8px 30px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.3);
 }
 
-.hero__word { display: inline-block; }
-
 .hero__word--name {
   font-family: var(--font-script);
-  color: #FFE38B;
-  text-shadow: 0 0 30px rgba(255, 227, 139, 0.55);
+  background: linear-gradient(100deg, #FFE38B 0%, #FFF8EF 45%, #FFC69B 60%, #FFE38B 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(255, 227, 139, 0.5));
+  animation: name-shine 4s ease-in-out infinite;
+}
+
+@keyframes name-shine {
+  0%, 100% { background-position: 100% 0; }
+  50% { background-position: 0% 0; }
 }
 
 .hero__subtext {
@@ -191,20 +233,22 @@
 }
 
 @keyframes scroll-dot {
-  0% { opacity: 1; top: 6px; }
-  70% { opacity: 0; top: 24px; }
-  100% { opacity: 0; top: 6px; }
+  0% { opacity: 1; transform: translate(-50%, 0); }
+  70% { opacity: 0; transform: translate(-50%, 18px); }
+  100% { opacity: 0; transform: translate(-50%, 0); }
 }
 
 @media (max-width: 768px) {
-  .hero__decor { font-size: 1.3rem !important; }
+  .hero__decor svg { width: 65%; height: auto; }
   .hero__orb { filter: blur(26px); }
   .hero__particle { display: none; }
   .hero__particle:nth-child(-n+10) { display: block; }
+  .hero__portrait { width: 116px; height: 116px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero, .hero__aurora, .hero__orb, .hero__particle, .hero__decor, .hero__cta-wrap::before {
+  .hero, .hero__aurora, .hero__orb, .hero__particle, .hero__decor, .hero__cta-wrap::before,
+  .hero__portrait, .hero__word--name {
     animation: none !important;
   }
 }

@@ -1,0 +1,35 @@
+.num-candle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.num-candle__wick {
+  position: relative;
+  width: 3px;
+  height: 14px;
+  margin-bottom: -4px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #2B1B14, #5A3A22);
+  z-index: 1;
+}
+
+/* The flame canvas sits on top of the wick; its flame base overlaps the tip. */
+.candle-flame-canvas {
+  position: absolute;
+  bottom: calc(100% - 8px);
+  left: 50%;
+  margin-left: -32px;
+  pointer-events: none;
+}
+
+.num-candle__digit {
+  display: block;
+  width: 78px;
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+@media (max-width: 480px) {
+  .num-candle__digit { width: 64px; }
+}

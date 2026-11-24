@@ -1,0 +1,48 @@
+.music-toggle {
+  position: fixed;
+  left: var(--space-md);
+  bottom: var(--space-md);
+  z-index: var(--z-overlay);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(29, 21, 41, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--t-fast) var(--ease-smooth);
+}
+.music-toggle:hover { transform: scale(1.06); }
+.music-toggle:active { transform: scale(0.95); }
+
+.music-toggle__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+}
+
+.music-toggle__bars span {
+  width: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-peach);
+  transition: height 0.3s ease;
+}
+
+/* Equalizer dance while music plays; flat bars when off. */
+.music-toggle.is-on .music-toggle__bars span { animation: eq 0.9s ease-in-out infinite alternate; }
+.music-toggle.is-on .music-toggle__bars span:nth-child(2) { animation-delay: -0.3s; }
+.music-toggle.is-on .music-toggle__bars span:nth-child(3) { animation-delay: -0.6s; }
+.music-toggle.is-on .music-toggle__bars span:nth-child(4) { animation-delay: -0.15s; }
+
+@keyframes eq {
+  from { height: 4px; }
+  to { height: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-toggle.is-on .music-toggle__bars span { animation: none; height: 12px; }
+}

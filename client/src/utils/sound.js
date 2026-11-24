@@ -31,21 +31,113 @@ function tone(freq, startTime, duration, gainPeak = 0.18) {
   osc.stop(startTime + duration + 0.05);
 }
 
-// Classic "Happy Birthday" opening phrase, synthesized note by note.
-const NOTE = { C4: 261.6, D4: 293.7, E4: 329.6, F4: 349.2, G4: 392.0, A4: 440.0, B4: 493.9, C5: 523.3 };
-const MELODY = [
-  [NOTE.C4, 0.3], [NOTE.C4, 0.2], [NOTE.D4, 0.5], [NOTE.C4, 0.5], [NOTE.F4, 0.5], [NOTE.E4, 0.9],
-  [NOTE.C4, 0.3], [NOTE.C4, 0.2], [NOTE.D4, 0.5], [NOTE.C4, 0.5], [NOTE.G4, 0.5], [NOTE.F4, 0.9],
+// Shared music bus: gentle compression plus a soft filtered echo, so the
+// melody sounds warm and full instead of like a bare test tone.
+let bus;
+function getBus() {
+  const audioCtx = getCtx();
+  if (bus) return bus;
+
+  const input = audioCtx.createGain();
+  input.gain.value = 0.9;
+
+  const comp = audioCtx.createDynamicsCompressor();
+  comp.threshold.value = -14;
+  comp.knee.value = 20;
+  comp.ratio.value = 4;
+
+  const delay = audioCtx.createDelay(1);
+  delay.delayTime.value = 0.27;
+  const feedback = audioCtx.createGain();
+  feedback.gain.value = 0.28;
+  const wet = audioCtx.createGain();
+  wet.gain.value = 0.22;
+  const damp = audioCtx.createBiquadFilter();
+  damp.type = "lowpass";
+  damp.frequency.value = 3200;
+
+  input.connect(comp);
+  input.connect(delay);
+  delay.connect(damp);
+  damp.connect(feedback);
+  feedback.connect(delay);
+  damp.connect(wet);
+  wet.connect(comp);
+  comp.connect(audioCtx.destination);
+
+  bus = input;
+  return bus;
+}
+
+// A music-box style voice: triangle fundamental plus a soft octave harmonic.
+function voice(freq, start, dur, { type = "triangle", gain = 0.16, attack = 0.02, release = 0.25, harmonic = 0.22 } = {}) {
+  const audioCtx = getCtx();
+  const out = audioCtx.createGain();
+  out.gain.setValueAtTime(0.0001, start);
+  out.gain.linearRampToValueAtTime(gain, start + attack);
+  out.gain.exponentialRampToValueAtTime(gain * 0.55, start + attack + dur * 0.4);
+  out.gain.exponentialRampToValueAtTime(0.0001, start + dur + release);
+
+  const fundamental = audioCtx.createOscillator();
+  fundamental.type = type;
+  fundamental.frequency.value = freq;
+  const overtone = audioCtx.createOscillator();
+  overtone.type = "sine";
+  overtone.frequency.value = freq * 2;
+  const overtoneGain = audioCtx.createGain();
+  overtoneGain.gain.value = harmonic;
+
+  fundamental.connect(out);
+  overtone.connect(overtoneGain).connect(out);
+  out.connect(getBus());
+
+  const end = start + dur + release + 0.05;
+  fundamental.start(start);
+  overtone.start(start);
+  fundamental.stop(end);
+  overtone.stop(end);
+}
+
+const N = {
+  F2: 87.31, G2: 98, A2: 110, B2: 123.47, C3: 130.81, D3: 146.83, E3: 164.81, G3: 196,
+  G4: 392, A4: 440, B4: 493.88, C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, C6: 1046.5, E6: 1318.5,
+};
+const CHORDS = { C: [N.C3, N.E3, N.G3], G: [N.G2, N.B2, N.D3], F: [N.F2, N.A2, N.C3] };
+const BEAT = 0.42;
+
+// The full song — all four phrases — as [note, beats, chord-to-start-here].
+const SONG = [
+  [N.G4, 0.75], [N.G4, 0.25], [N.A4, 1, "C"], [N.G4, 1], [N.C5, 1], [N.B4, 2, "G"],
+  [N.G4, 0.75], [N.G4, 0.25], [N.A4, 1, "G"], [N.G4, 1], [N.D5, 1], [N.C5, 2, "C"],
+  [N.G4, 0.75], [N.G4, 0.25], [N.G5, 1, "C"], [N.E5, 1], [N.C5, 1], [N.B4, 1, "F"], [N.A4, 2],
+  [N.F5, 0.75], [N.F5, 0.25], [N.E5, 1, "C"], [N.C5, 1], [N.D5, 1, "G"], [N.C5, 2.5, "C"],
 ];
 
 export function playBirthdayMelody() {
   const audioCtx = getCtx();
-  let t = audioCtx.currentTime + 0.05;
-  MELODY.forEach(([freq, dur]) => {
-    tone(freq, t, dur);
-    t += dur * 0.95;
+  let t = audioCtx.currentTime + 0.08;
+
+  SONG.forEach(([freq, beats, chord]) => {
+    const dur = beats * BEAT;
+    voice(freq, t, dur * 0.92, { gain: 0.17 });
+    if (chord) {
+      CHORDS[chord].forEach((f) =>
+        voice(f, t, BEAT * 2.6, { type: "sine", gain: 0.05, attack: 0.08, release: 0.4, harmonic: 0.1 })
+      );
+    }
+    t += dur;
   });
-  return (MELODY.reduce((sum, [, d]) => sum + d * 0.95, 0) + 0.2) * 1000;
+
+  return (t - audioCtx.currentTime + 0.4) * 1000;
+}
+
+// A rising sparkle arpeggio — the "magic" sound for reveals.
+export function playMagicChime() {
+  const audioCtx = getCtx();
+  const t = audioCtx.currentTime + 0.02;
+  [N.C5, N.E5, N.G5, N.C6, N.E6].forEach((f, i) =>
+    voice(f, t + i * 0.07, 0.45, { gain: 0.1, harmonic: 0.3, release: 0.5 })
+  );
 }
 
 // A burst of synthesized firecracker "pops" — filtered noise with a sharp
@@ -232,12 +324,6 @@ export function playCardsBurst(count = 4) {
 
   const totalMs = (t - audioCtx.currentTime) * 1000 + 300;
   return { events, totalMs };
-}
-
-export function playChime() {
-  const audioCtx = getCtx();
-  const t = audioCtx.currentTime;
-  [NOTE.C5, NOTE.E4, NOTE.G4].forEach((f, i) => tone(f, t + i * 0.06, 0.4, 0.12));
 }
 
 export function speak(text, { rate = 0.95, pitch = 1.1 } = {}) {

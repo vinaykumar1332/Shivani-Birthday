@@ -1,0 +1,16 @@
+/* Fixed overlays above everything (incl. the loader and wish screens) so the
+   petals and little crackers appear on every page. Clicks pass straight through. */
+.ambient-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: calc(var(--z-loader) + 1);
+}
+
+.ambient-canvas--sparks { opacity: 0.85; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-canvas { display: none; }
+}

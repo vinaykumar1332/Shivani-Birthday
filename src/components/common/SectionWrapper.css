@@ -15,7 +15,11 @@
   background: linear-gradient(170deg, rgba(184,161,227,0.14) 0%, rgba(255,248,239,0.9) 45%);
 }
 .section-wrap--plum {
-  background: var(--gradient-plum);
+  background:
+    radial-gradient(ellipse 60% 45% at 15% 10%, rgba(209, 71, 138, 0.22), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 90% 85%, rgba(246, 196, 83, 0.14), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(124, 92, 255, 0.16), transparent 70%),
+    linear-gradient(165deg, #2D1B4E 0%, #22163D 50%, #1A1030 100%);
   color: var(--color-cream);
 }
 .section-wrap--plum h2, .section-wrap--plum h3 { color: var(--color-cream); }
@@ -25,6 +29,9 @@
   background: linear-gradient(135deg, #E8B84B 0%, #F2956E 55%, #E1696F 100%);
   color: var(--color-plum-deep);
 }
+.section-wrap--gold h2 { color: var(--color-plum-deep); }
+.section-wrap--gold .section-heading__lead { color: rgba(29, 21, 41, 0.85); }
+.section-wrap--gold .eyebrow { color: var(--color-plum-deep); }
 
 .section-wrap::before,
 .section-wrap::after {
@@ -69,4 +76,10 @@
 @media (max-width: 768px) {
   .section-wrap { padding: var(--space-2xl) 0; }
   .section-heading { margin-bottom: var(--space-xl); }
+}
+
+@media (max-width: 480px) {
+  .section-wrap { padding: 4.5rem 0; }
+  .section-heading { margin-bottom: var(--space-lg); }
+  .section-heading__title { font-size: clamp(1.9rem, 8.5vw, 2.4rem); }
 }

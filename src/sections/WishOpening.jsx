@@ -1,36 +1,31 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { playFireworks, playBirthdayMelody, speak } from "../utils/sound";
+import { FireworksCanvas } from "../components/fireworks/FireworksCanvas";
+import { FIREWORK_COLORS } from "../components/fireworks/FireworksEngine";
+import { playRocketWhistle, playBurst, playFountain, playBirthdayMelody, speak } from "../utils/sound";
 import { birthdayConfig } from "../data/birthdayConfig";
 import "./WishOpening.css";
 
 const PHASE = { GATE: "gate", POPPING: "popping", REVEALED: "revealed" };
 const BURST_COLORS = ["#F6C453", "#D1478A", "#B8A1E3", "#FFC69B", "#7FFFD4", "#FF6B6B"];
+const PATTERNS = ["peony", "ring", "willow", "glitter"];
+const rand = (a, b) => a + Math.random() * (b - a);
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 export function WishOpening({ onContinue }) {
   const [phase, setPhase] = useState(PHASE.GATE);
   const [exiting, setExiting] = useState(false);
-  const [rockets, setRockets] = useState([]);
+  const engineRef = useRef(null);
   const fired = useRef(false);
   const timers = useRef([]);
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   const schedule = (fn, ms) => {
     const id = setTimeout(fn, ms);
     timers.current.push(id);
   };
-
-  const fireworkBurst = (xPct) =>
-    confetti({
-      particleCount: 70,
-      spread: 360,
-      startVelocity: 38,
-      gravity: 0.6,
-      scalar: 1.1,
-      ticks: 90,
-      origin: { x: xPct / 100, y: 0.4 },
-      colors: BURST_COLORS,
-    });
 
   const bigBurst = () =>
     confetti({
@@ -40,27 +35,34 @@ export function WishOpening({ onContinue }) {
       colors: BURST_COLORS,
     });
 
+  const fireRocket = (pattern = pick(PATTERNS)) => {
+    const engine = engineRef.current;
+    if (!engine) return;
+    const flightMs = rand(850, 1200);
+    playRocketWhistle(flightMs);
+    engine.launchRocket({
+      x: rand(0.12, 0.88) * engine.w,
+      targetY: rand(0.12, 0.38) * engine.h,
+      flightMs,
+      pattern,
+      color: pick(FIREWORK_COLORS),
+      onBurst: () => playBurst(pattern === "willow"),
+    });
+  };
+
   const open = () => {
     if (fired.current) return;
     fired.current = true;
-
     setPhase(PHASE.POPPING);
-    const { events, totalMs } = playFireworks(7);
 
-    events.forEach((ev, i) => {
-      const x = 12 + Math.random() * 76;
-      schedule(() => {
-        setRockets((r) => [...r, { id: i, x, exploded: false, flightMs: ev.flightMs }]);
-      }, ev.launchDelayMs);
-
-      schedule(() => {
-        setRockets((r) => r.map((rk) => (rk.id === i ? { ...rk, exploded: true } : rk)));
-        fireworkBurst(x);
-        schedule(() => {
-          setRockets((r) => r.filter((rk) => rk.id !== i));
-        }, 700);
-      }, ev.boomDelayMs);
-    });
+    // Anaar fountains on both sides while a volley of rockets goes up.
+    const engine = engineRef.current;
+    if (engine) {
+      engine.fountain(engine.w * 0.1, engine.h, 3600);
+      engine.fountain(engine.w * 0.9, engine.h, 3600);
+      playFountain(3600);
+    }
+    for (let i = 0; i < 7; i++) schedule(() => fireRocket(PATTERNS[i % PATTERNS.length]), 200 + i * 340);
 
     schedule(() => {
       setPhase(PHASE.REVEALED);
@@ -69,7 +71,10 @@ export function WishOpening({ onContinue }) {
       speak(birthdayConfig.wishOpening.spokenMessage);
 
       bigBurst();
-      const burstInterval = setInterval(bigBurst, 900);
+      const burstInterval = setInterval(() => {
+        bigBurst();
+        fireRocket();
+      }, 1100);
       timers.current.push(burstInterval);
 
       schedule(() => {
@@ -77,7 +82,7 @@ export function WishOpening({ onContinue }) {
         setExiting(true);
         schedule(onContinue, 700);
       }, Math.max(duration, 3200));
-    }, totalMs);
+    }, 200 + 6 * 340 + 1500);
   };
 
   return (
@@ -145,32 +150,10 @@ export function WishOpening({ onContinue }) {
             </motion.div>
           )}
 
+          <FireworksCanvas engineRef={engineRef} className="wish__fw-canvas" />
+
           {phase === PHASE.POPPING && (
             <div className="wish__fireworks-stage">
-              {rockets.map((rk) =>
-                !rk.exploded ? (
-                  <span
-                    key={rk.id}
-                    className="firework firework--rocket"
-                    style={{ left: `${rk.x}%`, animationDuration: `${rk.flightMs}ms` }}
-                  >
-                    🚀
-                  </span>
-                ) : (
-                  <span key={rk.id} className="firework firework--burst" style={{ left: `${rk.x}%` }}>
-                    {Array.from({ length: 14 }).map((_, d) => (
-                      <span
-                        key={d}
-                        className="firework__dot"
-                        style={{
-                          "--ang": `${(360 / 14) * d}deg`,
-                          background: BURST_COLORS[d % BURST_COLORS.length],
-                        }}
-                      />
-                    ))}
-                  </span>
-                )
-              )}
               <motion.p
                 className="wish__hint wish__hint--loud"
                 initial={{ opacity: 0, scale: 0.6 }}

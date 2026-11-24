@@ -1,17 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import confetti from "canvas-confetti";
 import { SectionWrapper, SectionHeading } from "../components/common/SectionWrapper";
-import { Candle } from "../components/birthday/Candle";
+import { NumberCandle } from "../components/birthday/NumberCandle";
 import { CardsReveal } from "../components/birthday/CardsReveal";
+import { FlowerIcon } from "../components/ui/Icons";
 import { useRevealAnimation } from "../hooks/useRevealAnimation";
 import { useInView } from "../hooks/useInView";
 import { birthdayConfig } from "../data/birthdayConfig";
-import { playCrackers, playBirthdayMelody, suspendAudio, resumeAudio } from "../utils/sound";
+import { PartyBoy, PartyBear } from "../components/characters/Characters";
+import { playCrackers, playBirthdayMelody, playBlow, stopMusic } from "../utils/sound";
+import { duckMusic, unduckMusic } from "../utils/backgroundMusic";
+import { motion, AnimatePresence } from "framer-motion";
 import "./BirthdayCake.css";
 
+const CONFETTI_COLORS = ["#F6C453", "#F29A9A", "#B8A1E3", "#FFC69B", "#FFF8EF"];
+
+// Number candles spell her age, e.g. 25 → "2" and "5".
+const DIGITS = String(birthdayConfig.age).split("");
+
+// Timeline (ms from the moment the cake scrolls into view).
+const WISH_TIME = 3000; // candles burn this long while she makes a wish
+const BLOW_GAP = 300; // the breath reaches each candle in turn
+
 export function BirthdayCake() {
-  const count = birthdayConfig.cake.candleCount;
-  const [lit, setLit] = useState(Array.from({ length: count }, () => true));
+  const [lit, setLit] = useState(() => DIGITS.map(() => true));
+  const [wishing, setWishing] = useState(false);
+  const [cheering, setCheering] = useState(false);
   const [showCards, setShowCards] = useState(false);
   const [done, setDone] = useState(false);
   const containerRef = useRevealAnimation({ selector: ".cake-reveal", y: 50, stagger: 0.15 });
@@ -22,55 +36,62 @@ export function BirthdayCake() {
   const schedule = (fn, ms) => timers.current.push(setTimeout(fn, ms));
 
   const runSequence = () => {
-    setLit(Array.from({ length: count }, () => true));
+    setLit(DIGITS.map(() => true));
+    setWishing(true);
+    setCheering(false);
     setShowCards(false);
     setDone(false);
 
-    // Candles blow out one by one, like a real breath sweeping across them.
-    for (let i = 0; i < count; i++) {
+    // 1. Let the flames burn while she makes a wish, then one big breath.
+    schedule(() => {
+      setWishing(false);
+      playBlow();
+    }, WISH_TIME);
+
+    DIGITS.forEach((_, i) => {
       schedule(() => {
         setLit((prev) => {
           const next = [...prev];
           next[i] = false;
           return next;
         });
-      }, 500 + i * 260);
-    }
+      }, WISH_TIME + 150 + i * BLOW_GAP);
+    });
 
-    const lastBlowAt = 500 + (count - 1) * 260;
+    const lastBlowAt = WISH_TIME + 150 + (DIGITS.length - 1) * BLOW_GAP;
 
+    // 2. Celebrate: crackers, confetti, the friends cheer, the song, the cards.
     schedule(() => {
       playCrackers(8);
-      confetti({ particleCount: 150, spread: 110, origin: { y: 0.6 } });
-    }, lastBlowAt + 200);
-
-    schedule(() => {
-      playBirthdayMelody();
+      confetti({ particleCount: 150, spread: 110, origin: { y: 0.6 }, colors: CONFETTI_COLORS });
+      setCheering(true);
     }, lastBlowAt + 500);
 
     schedule(() => {
-      setShowCards(true);
-    }, lastBlowAt + 900);
+      const songMs = playBirthdayMelody();
+      duckMusic(songMs + 300);
+      // Only offer Replay once the song has actually finished.
+      schedule(() => {
+        setDone(true);
+        doneRef.current = true;
+      }, songMs);
+    }, lastBlowAt + 800);
 
-    schedule(() => {
-      setDone(true);
-      doneRef.current = true;
-    }, lastBlowAt + 1600);
+    schedule(() => setShowCards(true), lastBlowAt + 1200);
   };
 
+  // Leaving the section cancels pending steps and cuts the song mid-note,
+  // so music only ever plays while the cake is on screen.
   const stopSequence = () => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
-    suspendAudio();
+    stopMusic();
+    unduckMusic();
   };
 
   useEffect(() => {
-    if (inView) {
-      resumeAudio();
-      if (!doneRef.current) runSequence();
-    } else {
-      stopSequence();
-    }
+    if (inView && !doneRef.current) runSequence();
+    if (!inView) stopSequence();
     return stopSequence;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
@@ -78,7 +99,6 @@ export function BirthdayCake() {
   const replay = () => {
     stopSequence();
     doneRef.current = false;
-    resumeAudio();
     runSequence();
   };
 
@@ -87,32 +107,74 @@ export function BirthdayCake() {
       <div ref={triggerRef}>
         <SectionHeading
           eyebrow="Make A Wish"
-          title="One Cake, A Few Candles, Infinite Wishes"
+          title="One Cake, Two Candles, Infinite Wishes"
           lead="Sit back — the candles blow themselves out."
         />
       </div>
 
       <div ref={containerRef} className="cake-stage">
+        <p className={`cake-wish-prompt ${wishing ? "is-visible" : ""}`} aria-live="polite">
+          {birthdayConfig.cake.wishPrompt}
+        </p>
+
+        <div className="cake-scene">
+        <div className="cake-friend cake-friend--boy cake-reveal">
+          <AnimatePresence>
+            {cheering && (
+              <motion.p
+                className="cake-bubble"
+                initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                transition={{ type: "spring", stiffness: 260, damping: 18 }}
+              >
+                {birthdayConfig.cake.boySays}
+              </motion.p>
+            )}
+          </AnimatePresence>
+          <PartyBoy cheering={cheering} />
+        </div>
+
         <div className="cake cake-reveal">
           <div className="cake__candles">
-            {lit.map((isLit, i) => (
-              <Candle key={i} index={i} isLit={isLit} onBlow={() => {}} />
+            {DIGITS.map((digit, i) => (
+              <NumberCandle key={i} digit={digit} index={i} lit={lit[i]} />
             ))}
           </div>
           <div className="cake__layer cake__layer--top">
             {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} className="cake__flower" style={{ left: `${10 + i * 18}%` }}>🌸</span>
+              <span key={i} className="cake__flower" style={{ left: `${8 + i * 18}%` }}>
+                <FlowerIcon size={22} petal={i % 2 ? "#B8A1E3" : "#F29A9A"} petalLight={i % 2 ? "#E9DEFF" : "#FFD9D2"} />
+              </span>
             ))}
           </div>
           <div className="cake__layer cake__layer--mid" />
           <div className="cake__layer cake__layer--base" />
         </div>
 
+        <div className="cake-friend cake-friend--bear cake-reveal">
+          <AnimatePresence>
+            {cheering && (
+              <motion.p
+                className="cake-bubble cake-bubble--right"
+                initial={{ opacity: 0, scale: 0.5, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, transition: { duration: 0.15 } }}
+                transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.35 }}
+              >
+                {birthdayConfig.cake.bearSays}
+              </motion.p>
+            )}
+          </AnimatePresence>
+          <PartyBear cheering={cheering} />
+        </div>
+        </div>
+
         <p className="cake-funny cake-reveal">{birthdayConfig.cake.funnyLine}</p>
 
         {done && (
           <div className="cake-actions cake-reveal">
-            <button className="cake-btn" onClick={replay}>Replay ✨</button>
+            <button className="cake-btn" onClick={replay}>Light The Candles Again ✨</button>
           </div>
         )}
 

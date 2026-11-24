@@ -1,0 +1,126 @@
+.donation-video {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* Outer decorative frame — gold border with corner ornaments */
+.donation-video__frame {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #1D1529;
+
+  /* Layered frame: inner glow + gold border + outer shadow */
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    0 0 0 3px #E8B84B,
+    0 0 0 6px rgba(232, 184, 75, 0.25),
+    0 0 0 9px rgba(232, 184, 75, 0.1),
+    0 32px 80px rgba(48, 36, 63, 0.55),
+    inset 0 0 60px rgba(232, 184, 75, 0.06);
+}
+
+/* Subtle gold corner accents rendered as a pseudo-element */
+.donation-video__frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: 15px;
+  background:
+    /* top-left corner */
+    linear-gradient(135deg, rgba(232,184,75,0.35) 0%, transparent 18%) top left / 46px 46px no-repeat,
+    /* top-right corner */
+    linear-gradient(225deg, rgba(232,184,75,0.35) 0%, transparent 18%) top right / 46px 46px no-repeat,
+    /* bottom-left corner */
+    linear-gradient(45deg,  rgba(232,184,75,0.35) 0%, transparent 18%) bottom left / 46px 46px no-repeat,
+    /* bottom-right corner */
+    linear-gradient(315deg, rgba(232,184,75,0.35) 0%, transparent 18%) bottom right / 46px 46px no-repeat;
+}
+
+/* Warm gold shimmer sweep on hover */
+.donation-video__frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 15px;
+  background: linear-gradient(120deg, transparent 35%, rgba(255,220,120,0.08) 50%, transparent 65%);
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  transition: background-position 0.6s ease;
+}
+.donation-video__frame:hover::after {
+  background-position: -200% 0;
+}
+
+.donation-video__frame video {
+  display: block;
+  width: 100%;
+  max-height: 68vh;
+  background: #1D1529;
+}
+
+/* Play/pause overlay — tap the whole frame to toggle on mobile */
+.donation-video__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  cursor: pointer;
+}
+
+.donation-video__sound {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 5;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  background: rgba(29, 21, 41, 0.72);
+  color: var(--color-gold, #E8B84B);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(232,184,75,0.3);
+  transition: transform var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+}
+.donation-video__sound:hover {
+  transform: translateY(-2px);
+  background: rgba(29, 21, 41, 0.88);
+  box-shadow: 0 4px 16px rgba(232,184,75,0.3);
+}
+
+/* Caption below the frame */
+.donation-video figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: var(--space-md);
+  text-align: center;
+  color: var(--color-plum-deep);
+}
+.donation-video figcaption strong {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+}
+.donation-video figcaption span { line-height: var(--lh-normal); }
+
+@media (max-width: 640px) {
+  .donation-video__frame {
+    border-radius: 12px;
+    box-shadow:
+      0 0 0 2px #E8B84B,
+      0 0 0 5px rgba(232, 184, 75, 0.2),
+      0 20px 50px rgba(48, 36, 63, 0.5);
+  }
+  .donation-video__sound { font-size: 0.78rem; padding: 0.4rem 0.8rem; }
+}

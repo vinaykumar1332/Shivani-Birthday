@@ -20,6 +20,11 @@
   color: var(--color-white);
 }
 
+.scratch-card__content--bleed {
+  padding: 0;
+  background: #1D1529;
+}
+
 .scratch-card__canvas {
   position: absolute;
   inset: 0;
@@ -30,4 +35,9 @@
 
 .scratch-card--revealed .scratch-card__canvas {
   pointer-events: none;
+}
+
+.scratch-card__canvas:focus-visible {
+  outline: 3px solid var(--color-plum-deep);
+  outline-offset: 3px;
 }

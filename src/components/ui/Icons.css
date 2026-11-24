@@ -1,0 +1,18 @@
+.icon-butterfly__wing {
+  transform-box: fill-box;
+}
+.icon-butterfly__wing--l { transform-origin: right center; }
+.icon-butterfly__wing--r { transform-origin: left center; }
+
+.icon-butterfly--flap .icon-butterfly__wing {
+  animation: butterfly-flap 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes butterfly-flap {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-butterfly--flap .icon-butterfly__wing { animation: none; }
+}
