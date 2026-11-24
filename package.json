@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node --test tests/",
     "build": "vite build",
     "lint": "oxlint",
+    "test": "node --test tests/",
     "preview": "vite preview"
   },
   "dependencies": {

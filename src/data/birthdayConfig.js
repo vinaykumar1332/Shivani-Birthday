@@ -9,6 +9,27 @@ export const birthdayConfig = {
   // Every photo used on the site — the loader preloads these so nothing pops in late.
   photos: ["/images/shivani.jpeg", "/images/shivani2.jpeg", "/images/shivani3.jpeg", "/images/shivani4.jpeg"],
 
+  countdown: {
+    // false = skip the countdown and open the site right away (use while developing).
+    enabled: true,
+    // Midnight India time, so it unlocks at the same moment for everyone, anywhere.
+    unlockAt: "2026-11-25T00:00:00+05:30",
+    eyebrow: "Shh… a surprise is loading",
+    title: "Almost Birthday O'Clock,",
+    subtitle: "Something special opens at midnight. The whole crew is waiting with you.",
+    progressLabel: "of the party loaded",
+    doneEyebrow: "It's midnight!",
+    doneTitle: "Happy 25th, Shivani Bai!",
+    // One line per character, in order: girl, monkey, boy, bear, graduate.
+    crewLines: [
+      "Sparklers ready! ✨",
+      "Fuse is lit… almost! 🎆",
+      "Party hats on! 🥳",
+      "Saving the biggest hug 🧸",
+      "25 looks good on you! 🎓",
+    ],
+  },
+
   wishOpening: {
     title: "Happy Birthday",
     name: "Shivani!",

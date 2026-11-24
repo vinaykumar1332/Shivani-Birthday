@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Loader } from "./sections/Loader";
 import { WishOpening } from "./sections/WishOpening";
-import { Hero } from "./sections/Hero";
-import { GiftBox } from "./sections/GiftBox";
-import { BirthdayCake } from "./sections/BirthdayCake";
-import { FireworksShow } from "./sections/FireworksShow";
-import { CharityReveal } from "./sections/CharityReveal";
-import { DreamsSection } from "./sections/DreamsSection";
-import { FinalScreen } from "./sections/FinalScreen";
-import { AmbientBackground } from "./components/common/AmbientBackground";
+import { Countdown } from "./sections/Countdown";
 import { AmbientCanvas } from "./components/common/AmbientCanvas";
-import { MusicToggle } from "./components/common/MusicToggle";
-import { ScrollProgress } from "./components/common/ScrollProgress";
-import { WaveDivider } from "./components/common/WaveDivider";
 import { useLenis } from "./hooks/useLenis";
 import { isMusicEnabled, startMusic, stopMusicLoop } from "./utils/backgroundMusic";
+import { isLocked, timeSynced } from "./utils/serverTime";
 
-const STAGE = { LOADING: "loading", WISH: "wish", SITE: "site" };
+// The main site downloads in the background (started right away) while the
+// loader, countdown and wish screen play, so the first paint stays light.
+const loadMainSite = () => import("./sections/MainSite");
+const MainSite = lazy(loadMainSite);
+loadMainSite();
+
+const STAGE = { LOADING: "loading", COUNTDOWN: "countdown", WISH: "wish", SITE: "site" };
 
 export default function App() {
   const [stage, setStage] = useState(STAGE.LOADING);
@@ -32,8 +29,8 @@ export default function App() {
     return stopMusicLoop;
   }, [stage]);
 
-  const scrollToCake = () => {
-    document.getElementById("cake")?.scrollIntoView({ behavior: "smooth" });
+  const afterLoading = () => {
+    timeSynced.then(() => setStage(isLocked() ? STAGE.COUNTDOWN : STAGE.WISH));
   };
 
   const restart = () => {
@@ -44,23 +41,13 @@ export default function App() {
   return (
     <>
       <AmbientCanvas />
-      {stage === STAGE.LOADING && <Loader onDone={() => setStage(STAGE.WISH)} />}
+      {stage === STAGE.LOADING && <Loader onDone={afterLoading} />}
+      {stage === STAGE.COUNTDOWN && <Countdown onUnlock={() => setStage(STAGE.WISH)} />}
       {stage === STAGE.WISH && <WishOpening onContinue={() => setStage(STAGE.SITE)} />}
       {stage === STAGE.SITE && (
-        <>
-          <ScrollProgress />
-          <AmbientBackground />
-          <Hero onBegin={scrollToCake} />
-          <WaveDivider color="var(--color-plum)" />
-          <BirthdayCake />
-          <FireworksShow />
-          <GiftBox />
-          <WaveDivider flip color="#E8B84B" />
-          <CharityReveal />
-          <DreamsSection />
-          <FinalScreen onRestart={restart} />
-          <MusicToggle />
-        </>
+        <Suspense fallback={null}>
+          <MainSite onRestart={restart} />
+        </Suspense>
       )}
     </>
   );
