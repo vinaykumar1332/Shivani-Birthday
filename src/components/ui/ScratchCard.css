@@ -1,0 +1,33 @@
+.scratch-card {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin: 0 auto;
+  background: var(--color-surface);
+}
+
+.scratch-card__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-sm);
+  font-weight: 600;
+  background: var(--gradient-warm);
+  color: var(--color-white);
+}
+
+.scratch-card__canvas {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  cursor: grab;
+  transition: opacity 0.5s var(--ease-smooth);
+}
+
+.scratch-card--revealed .scratch-card__canvas {
+  pointer-events: none;
+}
